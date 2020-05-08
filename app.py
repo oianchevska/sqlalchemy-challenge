@@ -74,7 +74,7 @@ def startpoint(start):
     result_statrt = list(np.ravel(temp_range))
 
 
-    return jsonify(f'For {start} date  Minimum temperature {result_statrt[0]},   Maximum temperature {result_statrt[1]},   Average temperature {result_statrt[2]}')
+    return jsonify(f'From {start} to the end date  Minimum temperature {result_statrt[0]},   Maximum temperature {result_statrt[1]},   Average temperature {result_statrt[2]}')
 
 
 @app.route("/api/v1.0/<start>/<end>")
@@ -83,7 +83,7 @@ def starEnd(start,end):
     temp_start_end=session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(and_(Measurement.date >=start, Measurement.date <=end)).all()
     session.close()
 
-    return jsonify(f'For {start} and {end} date  Minimum temperature {temp_start_end[0][0]}, Maximum temperature {temp_start_end[0][1]},   Average temperature {temp_start_end[0][2]}')
+    return jsonify(f'Fron {start} to {end} date  Minimum temperature {temp_start_end[0][0]}, Maximum temperature {temp_start_end[0][1]},   Average temperature {temp_start_end[0][2]}')
 
 
 if __name__ == '__main__':

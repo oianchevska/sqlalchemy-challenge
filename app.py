@@ -24,7 +24,9 @@ def welcome ():
     return(f"Available routes:<br/> "
            f"/api/v1.0/precipitation <br/> "
            f"/api/v1.0/stations <br/>"
-           f"/api/v1.0/tobs")
+           f"/api/v1.0/tobs <br/>"
+           f"/api/v1.0/start <br/>"
+           f"/api/v1.0/start/end")
 
 #Convert the query results to a dictionary using date as the key and prcp as the value.
 
@@ -61,5 +63,28 @@ def tobs():
 
     return jsonify(result_temp )
 
-if __name__== '__main__':
+# Calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
+
+@app.route("/api/v1.0/<start>")
+def startpoint(start):
+    session=Session(engine)
+    temp_range=session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(Measurement.date >=start).all()
+    session.close()
+
+    result_statrt = list(np.ravel(temp_range))
+
+
+    return jsonify(f'For {start} date  Minimum temperature {result_statrt[0]},   Maximum temperature {result_statrt[1]},   Average temperature {result_statrt[2]}')
+
+
+@app.route("/api/v1.0/<start>/<end>")
+def starEnd(start,end):
+    session=Session(engine)
+    temp_start_end=session.query(func.min(Measurement.tobs),func.max(Measurement.tobs),func.avg(Measurement.tobs)).filter(and_(Measurement.date >=start, Measurement.date <=end)).all()
+    session.close()
+
+    return jsonify(f'For {start} and {end} date  Minimum temperature {temp_start_end[0][0]}, Maximum temperature {temp_start_end[0][1]},   Average temperature {temp_start_end[0][2]}')
+
+
+if __name__ == '__main__':
     app.run(debug=True)
